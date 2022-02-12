@@ -1,8 +1,24 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+
+import { ConfigService } from "services/config/config.service";
+import { AppModule } from "./modules/app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+
+  const configService = app.get(ConfigService);
+
+  const docConfig = new DocumentBuilder()
+    .setTitle("Nyumi API Documentation")
+    .setVersion("1.0")
+    .build();
+  SwaggerModule.setup(
+    "docs",
+    app,
+    SwaggerModule.createDocument(app, docConfig)
+  );
+
+  await app.listen(configService.get("port"));
 }
 bootstrap();

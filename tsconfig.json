@@ -1,34 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2017",
+    "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./src/",
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "noEmit": true,
+    "incremental": true,
+    "skipLibCheck": true
   },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "src"
-  ]
+  "exclude": ["node_modules", "dist"]
 }
-  
