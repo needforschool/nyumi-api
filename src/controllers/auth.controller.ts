@@ -1,12 +1,12 @@
 import { Body, Controller, HttpStatus, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-import { CreateUserDto } from "interfaces/dto/create-user.dto";
-import { ApiResponse } from "interfaces/responses/api.response";
-import { Token } from "interfaces/token.interface";
-import { User } from "interfaces/user.interface";
-import { TokenService } from "services/token.service";
-import { UserService } from "services/user.service";
+import { CreateUserDto } from "@interfaces/dto/create-user.dto";
+import { ApiResponse } from "@interfaces/responses/api.response";
+import { Token } from "@interfaces/token.interface";
+import { User } from "@interfaces/user.interface";
+import { TokenService } from "@services/token.service";
+import { UserService } from "@services/user.service";
 
 @ApiTags("Authentication")
 @Controller("auth")
@@ -20,6 +20,7 @@ export class AuthController {
   async register(
     @Body() payload: CreateUserDto
   ): Promise<ApiResponse<{ user: User; token: string }>> {
+    console.log("try to register user");
     const usersWithEmail = await this.userService.searchUser({
       email: payload.email,
     });

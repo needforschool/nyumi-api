@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
-import { ConfigService } from "services/config/config.service";
+import { ConfigService } from "@services/config/config.service";
 import { UserModule } from "./user.module";
 
 @Module({

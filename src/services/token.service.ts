@@ -4,7 +4,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, Query } from "mongoose";
 
 import replaceIfPossible from "../utils/replaceIfPossible";
-import { Token } from "interfaces/token.interface";
+import { Token } from "@interfaces/token.interface";
 
 @Injectable()
 export class TokenService {
