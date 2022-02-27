@@ -10,21 +10,21 @@ export class UserService {
   constructor(@InjectModel("User") private readonly userModel: Model<User>) {}
 
   async searchUser(params?: { email?: string }): Promise<User[]> {
-    return this.userModel.find(params).exec();
+    return this.userModel.find(params || {}).exec();
   }
 
   async compareUserPassword(user: User, password: string): Promise<boolean> {
     return user.compareEncryptedPassword(password);
   }
 
-  async searchUserById(id: string): Promise<User> {
+  async searchUserById(id: string): Promise<User | null> {
     return this.userModel.findById(id).exec();
   }
 
   async updateUserById(
     id: string,
     userParams: { is_confirmed: boolean }
-  ): Promise<User> {
+  ): Promise<User | null> {
     return this.userModel.findOneAndUpdate({ _id: id }, userParams).exec();
   }
 

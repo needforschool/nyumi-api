@@ -7,6 +7,6 @@ export interface User extends Document {
   role: string;
 
   // Ghost fields
-  compareEncryptedPassword?: (password: string) => boolean;
-  getEncryptedPassword?: (password: string) => string;
+  compareEncryptedPassword: (password: string) => boolean;
+  getEncryptedPassword: (password: string) => string;
 }

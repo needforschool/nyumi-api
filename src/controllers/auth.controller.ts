@@ -1,7 +1,7 @@
 import { Body, Controller, HttpStatus, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-import { CreateUserDto } from "@interfaces/dto/create-user.dto";
+import { CreateUserDto } from "@dto/create-user.dto";
 import { ApiResponse } from "@interfaces/responses/api.response";
 import { Token } from "@interfaces/token.interface";
 import { User } from "@interfaces/user.interface";
@@ -20,7 +20,6 @@ export class AuthController {
   async register(
     @Body() payload: CreateUserDto
   ): Promise<ApiResponse<{ user: User; token: string }>> {
-    console.log("try to register user");
     const usersWithEmail = await this.userService.searchUser({
       email: payload.email,
     });
@@ -52,7 +51,7 @@ export class AuthController {
     const users: User[] = await this.userService.searchUser({
       email: payload.email,
     });
-    if (!users && users.length === 0) {
+    if (!users || users.length === 0) {
       return {
         status: HttpStatus.BAD_REQUEST,
         message: "User with this email doesn't exists",
