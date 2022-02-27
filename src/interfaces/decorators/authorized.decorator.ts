@@ -1,5 +1,6 @@
 import { applyDecorators, SetMetadata } from "@nestjs/common";
-import { Role } from "./role.enum";
 
-export const AuthRoute = (...roles: Role[]) =>
+import { Role } from "@enums/role.enum";
+
+export const Authorized = (...roles: Role[]) =>
   applyDecorators(SetMetadata("secured", true), SetMetadata("roles", roles));

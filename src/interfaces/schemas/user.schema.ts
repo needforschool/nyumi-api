@@ -1,6 +1,8 @@
 import * as mongoose from "mongoose";
 import * as bcrypt from "bcryptjs";
 
+import { Role } from "@enums/role.enum";
+
 const SALT_ROUNDS = 10;
 
 function transformValue(_: unknown, ret: { [key: string]: any }) {
@@ -33,7 +35,7 @@ export const UserSchema = new mongoose.Schema<IUserSchema>(
     },
     role: {
       type: String,
-      default: "user",
+      default: Role.USER,
     },
   },
   {

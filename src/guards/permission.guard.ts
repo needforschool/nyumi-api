@@ -22,7 +22,7 @@ export class PermissionGuard implements CanActivate {
       context.getHandler()
     );
 
-    if (!roles) return true;
+    if (!roles || roles.length === 0) return true;
 
     const request = context.switchToHttp().getRequest();
 

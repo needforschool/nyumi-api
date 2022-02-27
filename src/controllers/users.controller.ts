@@ -1,16 +1,17 @@
 import { Controller, Get } from "@nestjs/common";
-import { AuthRoute } from "@interfaces/auth-route.decorator";
-import { Role } from "@interfaces/role.enum";
+
 import { User } from "@interfaces/user.interface";
 import { UserService } from "@services/user.service";
+import { Authorized } from "@decorators/authorized.decorator";
+import { Role } from "@enums/role.enum";
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly userService: UserService) {}
 
-  @AuthRoute(Role.Admin)
+  @Authorized(Role.ADMIN)
   @Get()
   async getUsers(): Promise<User[]> {
-    return [];
+    return this.userService.searchUser();
   }
 }

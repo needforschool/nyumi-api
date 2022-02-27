@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
 import { ConfigService } from "@services/config/config.service";
+import { RecordModule } from "./record.module";
 import { UserModule } from "./user.module";
 
 @Module({
@@ -19,6 +20,7 @@ import { UserModule } from "./user.module";
       isGlobal: true,
     }),
     UserModule,
+    RecordModule,
   ],
   providers: [ConfigService],
 })
