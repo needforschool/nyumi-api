@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -15,7 +16,9 @@ import { Record } from "@interfaces/record.interface";
 import { RecordType } from "@enums/record-type.enum";
 import { RecordService } from "@services/record.service";
 import { CreateRecordDto } from "@dto/create-record.dto";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("Records")
 @Controller("records")
 export class RecordsController {
   constructor(private readonly service: RecordService) {}
@@ -47,15 +50,24 @@ export class RecordsController {
   @UsePipes(new ValidateRecordTypePipe())
   @Post(":type")
   async createRecord(
-    @Param("type") _: RecordType,
+    @Param("type") type: RecordType,
     @Body() payload: CreateRecordDto,
     @Req() request: Request & { userId: string }
   ): Promise<Record> {
-    const record: Record = await this.service.createCigaretteRecord(
-      payload,
-      request.userId
-    );
-
-    return record;
+    if (type === RecordType.CIGARETTES) {
+      const record: Record = await this.service.createCigaretteRecord(
+        payload,
+        request.userId
+      );
+      return record;
+    } else if (type === RecordType.STEPS) {
+      const record: Record = await this.service.createStepRecord(
+        payload,
+        request.userId
+      );
+      return record;
+    } else {
+      throw new BadRequestException("Invalid record type");
+    }
   }
 }

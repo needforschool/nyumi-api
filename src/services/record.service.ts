@@ -36,4 +36,16 @@ export class RecordService {
     });
     return record.save();
   }
+
+  async createStepRecord(
+    payload: CreateRecordDto,
+    userId: string
+  ): Promise<Record> {
+    const record: Record = new this.stepsRecordModel({
+      ...payload,
+      user_id: userId,
+      type: RecordType.STEPS,
+    });
+    return record.save();
+  }
 }

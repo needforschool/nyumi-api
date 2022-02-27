@@ -20,6 +20,7 @@ export class AuthController {
   async register(
     @Body() payload: CreateUserDto
   ): Promise<ApiResponse<{ user: User; token: string }>> {
+    // - Check if user with this email already exists
     const usersWithEmail = await this.userService.searchUser({
       email: payload.email,
     });
@@ -48,6 +49,7 @@ export class AuthController {
   async login(
     @Body() payload: CreateUserDto
   ): Promise<ApiResponse<{ user: User; token: string }>> {
+    // - Check if user with this email exists
     const users: User[] = await this.userService.searchUser({
       email: payload.email,
     });

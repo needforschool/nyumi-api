@@ -13,7 +13,7 @@ export class ValidateRecordTypePipe implements PipeTransform<RecordType> {
     if (metadata.type !== "param") return value;
 
     if (!(value.toUpperCase() in RecordType)) {
-      throw new BadRequestException("Invalid record type.");
+      throw new BadRequestException("Invalid record type");
     }
     return value;
   }

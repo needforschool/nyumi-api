@@ -28,11 +28,11 @@ export class PermissionGuard implements CanActivate {
 
     const user: User = await this.userService.searchUserById(request.userId);
 
-    if (!user) throw new BadRequestException("User not found");
+    if (!user) throw new BadRequestException("Invalid request context");
 
     const hasRole = () => roles.includes(user.role);
 
-    if (!hasRole()) throw new UnauthorizedException("User does not have role");
+    if (!hasRole()) throw new UnauthorizedException("User is not authorized");
 
     return true;
   }
