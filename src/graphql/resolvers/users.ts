@@ -9,15 +9,10 @@ import {
   validateChangePasswordInput,
 } from "../../utils/validators";
 import checkAuth from "../../utils/checkAuth";
-import ROLES, { roleType } from "../../data/roles";
-import { _getRole } from "./roles";
-import crypto from "crypto";
 import { MAIL_USER, transporter } from "../../services/nodemailer";
-import { APP_NAME, APP_URL } from "../../constants/main";
+import APP from "../../constants/app";
 import Log from "../../utils/log";
 import HTML_CHANGE_PASSWORD from "../../services/nodemailer/models/changePassword";
-import HTML_WELCOME from "../../services/nodemailer/models/welcome";
-import { Success } from "../../types/success";
 import MESSAGES from "../../constants/messages";
 
 const SECRET_KEY = process.env.SECRET_KEY || "secretKey";
@@ -39,13 +34,7 @@ export const _getUser = async (userId: string): Promise<any> => {
   try {
     const user = await User.findById(userId);
     if (user) {
-      const roles = user.roles.map((roleId) => {
-        const role = ROLES.filter((role) => role.id === roleId)[0];
-        return role;
-      });
-      const authentic = user.authentic.status ?? false;
-
-      return { ...user._doc, id: user._id, roles, authentic };
+      return user;
     } else {
       throw new Error("User not found");
     }
@@ -56,38 +45,6 @@ export const _getUser = async (userId: string): Promise<any> => {
 
 export default {
   Query: {
-    async getUsers(_: any, __: any, context: any): Promise<any> {
-      // we need to check if the user is authenticated and if he has the role admin
-      const user = checkAuth(context);
-      const currentUser = await User.findById(user.id);
-      if (currentUser.roles.includes(roleType.admin)) {
-        // find all the users
-        const users = await User.find();
-        // return formatted users like "_getUser"
-        return users.map((user) => {
-          const roles = user.roles.map((roleId) => {
-            const role = ROLES.filter((role) => role.id === roleId)[0];
-            return role;
-          });
-          const authentic = user.authentic.status ?? false;
-          return { ...user._doc, id: user._id, roles, authentic };
-        });
-      } else {
-        throw new AuthenticationError(MESSAGES.ERROR_AUTH_NOT_ALLOWED);
-      }
-    },
-    async getUserEmail(
-      _,
-      { email }: { email: string }
-    ): Promise<{
-      success: boolean;
-    }> {
-      let success = false;
-      // get user by email to see if it exists
-      const user = await User.findOne({ email });
-      if (user) success = true;
-      return { success };
-    },
     async getCurrentUser(_, __, context: any) {
       try {
         const user = checkAuth(context);
@@ -115,10 +72,6 @@ export default {
         throw new UserInputError("User not found", { errors });
       }
 
-      const roles = user.roles.map((roleId) => {
-        return _getRole(roleId);
-      });
-
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
         errors.incorrectCredentials = MESSAGES.ERROR_AUTH_CREDENTIALS;
@@ -131,27 +84,11 @@ export default {
         ...user._doc,
         id: user._id,
         token,
-        roles,
       };
     },
-    async register(
-      _,
-      {
-        registerInput: {
-          email,
-          password,
-          firstname,
-          lastname,
-          tel,
-          streetNumber,
-          streetName,
-          zipCode,
-          city,
-        },
-      }
-    ) {
+    async register(_, { registerInput: { email, password, firstname } }) {
       // validate user data
-      const { valid, errors } = validateRegisterInput(email, tel, password);
+      const { valid, errors } = validateRegisterInput(email, password);
       if (!valid) {
         throw new UserInputError("Errors", { errors });
       }
@@ -167,51 +104,14 @@ export default {
       // hash password and create an auth token
       password = await bcrypt.hash(password, 12);
 
-      // set user roles to customer only
-      const roles = [roleType.customer];
-
-      // set authentic user token to confirm email
-      const authenticToken = crypto.randomBytes(64).toString("hex");
-      const authentic = {
-        token: authenticToken,
-        status: false,
-      };
-
       const newUser = new User({
         email,
         password,
-        roles,
         firstname,
-        lastname,
-        tel,
-        streetNumber,
-        streetName,
-        zipCode,
-        city,
-        authentic,
         createdAt: new Date().toISOString(),
       });
 
       const res = await newUser.save();
-
-      const link = `${APP_URL}/dashboard?verify=${authentic.token}`;
-      try {
-        const info = await transporter.sendMail({
-          from: `"${APP_NAME}" <${MAIL_USER}>`, // sender address
-          to: res.email,
-          subject: `Verify your email | ${APP_NAME}`, // Subject line
-          text: `Dont see this mail correctly? click this link: ${link}`, // plain text body
-          html: HTML_WELCOME(link), // html body
-        });
-        Log.info(`message sent: ${info.messageId}`);
-      } catch (err) {
-        throw new Error(err);
-      }
-
-      const userRoles = roles.map((roleId) => {
-        const role = ROLES.filter((role) => role.id === roleId)[0];
-        return role;
-      });
 
       const token = generateToken(res);
 
@@ -219,27 +119,14 @@ export default {
         ...res._doc,
         id: res._id,
         token,
-        roles: userRoles,
       };
     },
     async updateUser(
       _: any,
       {
         firstname,
-        lastname,
-        tel,
-        streetNumber,
-        streetName,
-        zipCode,
-        city,
       }: {
         firstname: string;
-        lastname: string;
-        tel: string;
-        streetNumber: string;
-        streetName: string;
-        zipCode: string;
-        city: string;
       },
       context: any
     ): Promise<any> {
@@ -250,10 +137,7 @@ export default {
       const token = generateToken(user);
 
       try {
-        await User.updateOne(
-          { _id: user.id },
-          { firstname, lastname, tel, streetNumber, streetName, zipCode, city }
-        );
+        await User.updateOne({ _id: user.id }, { firstname });
 
         const res = await _getUser(user.id);
 
@@ -265,61 +149,27 @@ export default {
         throw new Error(err);
       }
     },
-    async sendVerification(_, __, context): Promise<Success> {
-      const authUser = checkAuth(context);
-      const authentic = {
-        token: crypto.randomBytes(64).toString("hex"),
-      };
-
-      if (authUser) {
-        const user = await User.findById(authUser.id);
-        if (user && !user.authentic.status) {
-          user.authentic = {
-            ...user.authentic,
-            ...authentic,
-          };
-          await user.save();
-          // send mail to "email"
-          const link = `${APP_URL}/dashboard?verify=${authentic.token}`;
-          try {
-            const info = await transporter.sendMail({
-              from: `"${APP_NAME}" <${MAIL_USER}>`, // sender address
-              to: user.email,
-              subject: `Verify your email | ${APP_NAME}`, // Subject line
-              text: `Dont see this mail correctly? click this link: ${link}`, // plain text body
-              html: HTML_WELCOME(link), // html body
-            });
-            Log.info(`message sent: ${info.messageId}`);
-            return { success: true };
-          } catch (err) {
-            throw new Error(err);
-          }
-        } else {
-          throw new Error("User not found");
-        }
-      }
-      return { success: false };
-    },
     async recoverUser(_, { email }) {
       let success = false;
-      const recoverToken = crypto.randomBytes(64).toString("hex");
+      const recoverCode = (Math.floor(Math.random() * 10000) + 10000)
+        .toString()
+        .substring(1);
 
       const user = await User.findOne({ email });
       if (user) {
         user.recover = {
-          token: recoverToken,
+          code: recoverCode,
           createdAt: new Date().toISOString(),
         };
         await user.save();
         // send mail to "email"
-        const link = `${APP_URL}/auth/recovery/change?email=${email}&token=${recoverToken}`;
         try {
           const info = await transporter.sendMail({
-            from: `"${APP_NAME}" <${MAIL_USER}>`, // sender address
+            from: `"${APP.NAME}" <${MAIL_USER}>`, // sender address
             to: email,
-            subject: `Change Password | ${APP_NAME}`, // Subject line
-            text: `Dont see this mail correctly? click this link: ${link}`, // plain text body
-            html: HTML_CHANGE_PASSWORD(link), // html body
+            subject: `Change Password | ${APP.NAME}`, // Subject line
+            text: `Dont see this mail correctly? your code is: ${recoverCode}`, // plain text body
+            html: HTML_CHANGE_PASSWORD(recoverCode), // html body
           });
           Log.info(`message sent: ${info.messageId}`);
           success = true;
@@ -333,31 +183,10 @@ export default {
         success,
       };
     },
-    async verifyUser(_, { token }, context) {
-      let success = false;
-      const authUser = checkAuth(context);
-
-      if (authUser) {
-        const user = await User.findById(authUser.id);
-        if (user && !user.authentic.status) {
-          if (user.authentic.token === token) {
-            user.authentic = {
-              status: true,
-            };
-            await user.save();
-            success = true;
-          }
-        }
-      }
-
-      return {
-        success,
-      };
-    },
-    async updateUserPassword(_, { email, token, password, confirmPassword }) {
+    async updateUserPassword(_, { email, code, password, confirmPassword }) {
       const { valid, errors } = validateChangePasswordInput(
         email,
-        token,
+        code,
         password,
         confirmPassword
       );
@@ -368,7 +197,7 @@ export default {
       const user = await User.findOne({ email });
       if (user) {
         if (user.recover) {
-          if (user.recover.token === token) {
+          if (user.recover.code === code) {
             const now = new Date();
             const createdAt = new Date(user.recover.createdAt);
             const ONE_HOUR = 1000 * 60 * 60;
@@ -378,14 +207,10 @@ export default {
               user.password = password;
               user.recover = undefined;
               const res = await user.save();
-              const roles = res.roles.map((roleId) => {
-                return _getRole(roleId);
-              });
               return {
                 ...res._doc,
                 id: res._id,
                 token,
-                roles,
               };
               // send mail to "email" to say its confirmed
             } else {
