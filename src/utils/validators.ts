@@ -1,10 +1,6 @@
 import moment from "moment";
 
-export const validateRegisterInput = (
-  email: string,
-  tel: string,
-  password: string
-) => {
+export const validateRegisterInput = (email: string, password: string) => {
   const errors: any = {};
   if (email.trim() === "") {
     errors.email = "Email must not be empty";
@@ -13,14 +9,6 @@ export const validateRegisterInput = (
       /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
     if (!email.match(regEx)) {
       errors.email = "Email must be a valid email address";
-    }
-  }
-  if (!tel) {
-    errors.tel = "Telephone number must not be empty";
-  } else {
-    const regEx = /[0-9]{0,14}$/;
-    if (!tel.match(regEx)) {
-      errors.tel = "Phone must be valid";
     }
   }
   if (password === "") {
