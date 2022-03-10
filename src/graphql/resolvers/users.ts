@@ -142,7 +142,8 @@ export default {
         const res = await _getUser(user.id);
 
         return {
-          ...res,
+          ...res._doc,
+          id: res._id,
           token,
         };
       } catch (err) {
