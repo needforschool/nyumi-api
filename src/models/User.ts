@@ -9,6 +9,10 @@ const userSchema = new Schema({
     code: String,
     createdAt: String,
   },
+  goal: {
+    step: Number,
+    smoke: Number,
+  },
 });
 
 export default model("User", userSchema);
