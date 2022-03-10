@@ -1,5 +1,7 @@
 import { ApolloServer } from "apollo-server-fastify";
 import dotenv from "dotenv-flow";
+import cors from "cors";
+import fastifyExpress from "fastify-express";
 
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typeDefs";
@@ -71,6 +73,28 @@ const main = async () => {
     };
   };
 
+  // CORS
+
+  const allowedOrigins = [
+    "capacitor://localhost",
+    "ionic://localhost",
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:8100",
+    "https://studio.apollographql.com",
+  ];
+
+  // Reflect the origin if it's in the allowed list or not defined (cURL, Postman, etc.)
+  const corsOptions = {
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Origin not allowed by CORS"));
+      }
+    },
+  };
+
   // generate fastify app
   const app = fastify();
 
@@ -88,6 +112,8 @@ const main = async () => {
 
   // run server with mongo and apollo
   try {
+    await app.register(fastifyExpress);
+    app.use(cors(corsOptions));
     await dbConfig.connect();
     Log.event("connected to mongodb");
     await server.start();
