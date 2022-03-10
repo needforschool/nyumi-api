@@ -9,6 +9,7 @@ export default {
     ...statisticWalkResolvers.Query,
   },
   Mutation: {
+    ...usersResolvers.Mutation,
     ...statisticSmokeResolvers.Mutation,
     ...statisticWalkResolvers.Mutation,
   },
