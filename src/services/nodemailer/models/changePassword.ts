@@ -1,4 +1,4 @@
-const HTML_CHANGE_PASSWORD = (confirmationUrl: string): string => `
+const HTML_CHANGE_PASSWORD = (recoverCode: string): string => `
 <!doctype html>
 <html>
 
@@ -115,10 +115,9 @@ const HTML_CHANGE_PASSWORD = (confirmationUrl: string): string => `
             style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;" width="100%">
             <tr>
               <td class="content-block"
-                style="font-family: 'Poppins', sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; background-color: rgb(1, 17, 18); color: "white"; font-size: 12px; text-align: center;"
+                style="font-family: 'Poppins', sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; background-color: rgb(1, 17, 18); color: white; font-size: 12px; text-align: center;"
                 valign="top" align="center">
-                <img src="https://expatsfacilities.com/static/images/favicon/android-chrome-192x192.png" width="50" height="50" alt="Expat's Facilities logo">
-                <p style="font-weight:bold;color:white;">Expat's Facilities</p>
+                <p style="font-weight:bold;color:white;">Nyumi</p>
               </td>
             </tr>
           </table>
@@ -140,40 +139,13 @@ const HTML_CHANGE_PASSWORD = (confirmationUrl: string): string => `
                   style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;"
                   width="100%">
                   <tr>
-                    <td style="font-family: 'Poppins', sans-serif; font-size: 14px; vertical-align: top;" valign="top"; color: "white";>
+                    <td style="font-family: 'Poppins', sans-serif; font-size: 14px; vertical-align: top;" valign="top"; color: white;>
                       <p
                         style="font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                        Hello,</p>
+                        Bonjour,</p>
                       <p
-                        style="font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                        We've received a password change
-                        request for your Expat's Facilities account.<br />To change your password, please click the link
-                        below:</p>
-                      <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
-                        style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; box-sizing: border-box; width: 100%;"
-                        width="100%">
-                        <tbody>
-                          <tr>
-                            <td align="left"
-                              style="font-family: 'Poppins', sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;"
-                              valign="top">
-                              <table role="presentation" border="0" cellpadding="0" cellspacing="0"
-                                style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
-                                <tbody>
-                                  <tr>
-                                    <td
-                                      style="font-family: 'Poppins', sans-serif; font-size: 14px; vertical-align: top; border-radius: 10px; text-align: center; background-color: rgb(255,66,0);"
-                                      valign="top" align="center" bgcolor="#3498db"> <a href="${confirmationUrl}""
-                                        target="_blank"
-                                        style="border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; background-color: rgb(255,66,0); border-color: rgb(255,66,0); color: #ffffff;">Change
-                                        your password</a> </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      style="font-weight:bold;color:white;">
+                        Pour changer votre mot de passe, veuillez entrer le code de confirmation suivant dans l'application: ${recoverCode}</p>
                     </td>
                   </tr>
                 </table>
@@ -190,12 +162,6 @@ const HTML_CHANGE_PASSWORD = (confirmationUrl: string): string => `
               style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;"
               width="100%">
               <tr>
-                <td class="content-block"
-                  style="font-family: 'Poppins', sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: "white"; font-size: 12px; text-align: center;"
-                  valign="top" align="center">
-                  <span class="apple-link" style="color:white; text-align: center;">Expat's Facilities<br> 7 Bis Rue Jeanne d'Arc, 76000 Rouen</span>
-                  <br> <a href="tel:+33 7 56 85 66 85" style="color:white;">+33 7 56 85 66 85</a> <br> <a href="mailto:contact@expatsfacilities.com" style="color:white;">contact@expatsfacilities.com</a><br><span style="color:white;">Expat's Facilities © All Rights Reserved
-                </td>
               </tr>
             </table>
           </div>
