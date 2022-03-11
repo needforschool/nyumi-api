@@ -26,6 +26,7 @@ const generateToken = (user) => {
       email: user.email,
       firstname: user.firstname,
       lastname: user.lastname,
+      goals: user.goals,
     },
     SECRET_KEY,
     { expiresIn: "365d" }
@@ -106,10 +107,16 @@ export default {
       // hash password and create an auth token
       password = await bcrypt.hash(password, 12);
 
+      const goals = {
+        step: 0,
+        smoke: 0,
+      };
+
       const newUser = new User({
         email,
         password,
         firstname,
+        goals,
         createdAt: new Date().toISOString(),
       });
 
@@ -140,6 +147,37 @@ export default {
 
       try {
         await User.updateOne({ _id: user.id }, { firstname });
+
+        const res = await _getUser(user.id);
+
+        return {
+          ...res._doc,
+          id: res._id,
+          token,
+        };
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    async updateUserGoals(
+      _: any,
+      {
+        goals,
+      }: {
+        goals: {
+          step: number;
+          smoke: number;
+        };
+      },
+      context: any
+    ): Promise<any> {
+      const user = checkAuth(context);
+
+      if (!user) throw new AuthenticationError("Action not allowed");
+      const token = generateToken(user);
+
+      try {
+        await User.updateOne({ _id: user.id }, { goals });
 
         const res = await _getUser(user.id);
 
