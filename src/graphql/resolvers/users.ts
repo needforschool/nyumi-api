@@ -24,6 +24,7 @@ const generateToken = (user) => {
       email: user.email,
       firstname: user.firstname,
       lastname: user.lastname,
+      goals: user.goals,
     },
     SECRET_KEY,
     { expiresIn: "365d" }
@@ -161,14 +162,16 @@ export default {
       {
         goals,
       }: {
-        goals: string;
+        goals: {
+          step: number;
+          smoke: number;
+        };
       },
       context: any
     ): Promise<any> {
       const user = checkAuth(context);
 
       if (!user) throw new AuthenticationError("Action not allowed");
-
       const token = generateToken(user);
 
       try {

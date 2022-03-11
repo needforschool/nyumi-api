@@ -23,6 +23,10 @@ export default gql`
     createdAt: String!
     goals: UserGoals!
   }
+  input GoalsInput {
+    step: String!
+    smoke: String!
+  }
   input RegisterInput {
     email: String!
     password: String!
@@ -43,7 +47,7 @@ export default gql`
 
     updateUser(firstname: String): User!
 
-    updateUserGoals(goals: Int): UserGoals!
+    updateUserGoals(goals: GoalsInput): User!
 
     recoverUser(email: String!): Success!
     updateUserPassword(
