@@ -46,6 +46,7 @@ export default gql`
     login(email: String!, password: String!): User!
 
     updateUser(firstname: String): User!
+    deleteUser: Boolean
 
     updateUserGoals(goals: GoalsInput): User!
 
