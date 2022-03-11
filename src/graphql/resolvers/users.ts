@@ -104,10 +104,16 @@ export default {
       // hash password and create an auth token
       password = await bcrypt.hash(password, 12);
 
+      const goals = {
+        step: 0,
+        smoke: 0,
+      };
+
       const newUser = new User({
         email,
         password,
         firstname,
+        goals,
         createdAt: new Date().toISOString(),
       });
 

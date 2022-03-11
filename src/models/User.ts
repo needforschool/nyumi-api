@@ -9,7 +9,7 @@ const userSchema = new Schema({
     code: String,
     createdAt: String,
   },
-  goal: {
+  goals: {
     step: Number,
     smoke: Number,
   },

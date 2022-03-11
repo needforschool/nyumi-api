@@ -1,6 +1,10 @@
 import { gql } from "apollo-server-core";
 
 export default gql`
+  type UserGoals {
+    step: Int
+    smoke: Int
+  }
   type StatisticWalk {
     amount: Int!
     createdAt: String!
@@ -17,6 +21,7 @@ export default gql`
     token: String!
     firstname: String!
     createdAt: String!
+    goals: UserGoals!
   }
   input RegisterInput {
     email: String!
