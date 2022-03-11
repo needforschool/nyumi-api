@@ -43,6 +43,8 @@ export default gql`
 
     updateUser(firstname: String): User!
 
+    updateUserGoals(goals: Int): UserGoals!
+
     recoverUser(email: String!): Success!
     updateUserPassword(
       email: String!

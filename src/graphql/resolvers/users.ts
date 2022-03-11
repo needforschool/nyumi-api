@@ -156,6 +156,35 @@ export default {
         throw new Error(err);
       }
     },
+    async updateUserGoals(
+      _: any,
+      {
+        goals,
+      }: {
+        goals: string;
+      },
+      context: any
+    ): Promise<any> {
+      const user = checkAuth(context);
+
+      if (!user) throw new AuthenticationError("Action not allowed");
+
+      const token = generateToken(user);
+
+      try {
+        await User.updateOne({ _id: user.id }, { goals });
+
+        const res = await _getUser(user.id);
+
+        return {
+          ...res._doc,
+          id: res._id,
+          token,
+        };
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
     async recoverUser(_, { email }) {
       let success = false;
       const recoverCode = (Math.floor(Math.random() * 10000) + 10000)
