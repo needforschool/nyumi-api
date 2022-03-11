@@ -14,6 +14,8 @@ import APP from "../../constants/app";
 import Log from "../../utils/log";
 import HTML_CHANGE_PASSWORD from "../../services/nodemailer/models/changePassword";
 import MESSAGES from "../../constants/messages";
+import StatisticSmoke from "../../models/StatisticSmoke";
+import StatisticWalk from "../../models/StatisticWalk";
 
 const SECRET_KEY = process.env.SECRET_KEY || "secretKey";
 
@@ -225,6 +227,20 @@ export default {
         }
       } else {
         throw new Error("User not found");
+      }
+    },
+    async deleteUser(_, __, context: any) {
+      const user = checkAuth(context);
+      if (!user) throw new AuthenticationError("Action not allowed");
+
+      try {
+        await User.findByIdAndDelete(user.id);
+        await StatisticSmoke.deleteMany({ userId: user.id });
+        await StatisticWalk.deleteMany({ userId: user.id });
+
+        return true;
+      } catch (err) {
+        throw new Error(err);
       }
     },
   },

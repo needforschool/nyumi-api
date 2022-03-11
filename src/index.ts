@@ -83,6 +83,7 @@ const main = async () => {
     "http://localhost:8100",
     "http://172.20.10.12:8100",
     "http://172.20.10.10:8100",
+    "http://172.24.14.29:8100",
     "https://studio.apollographql.com",
   ];
 
